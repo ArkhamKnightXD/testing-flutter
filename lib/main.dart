@@ -8,7 +8,7 @@ void main(){
 
   //flutter tiene una funcion global runApp que toma un unico widget como argumento
   //y Mostrara ese widget en cualquier dispositivo que estemos utilizando
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 //Los statelesswidget son lo que se deben de utilizar solo para la visualizacion
@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
   //El metodo build retorna un widget y es el que utilizaremos para crear y modificar el ui
   @override
   Widget build(BuildContext context) {
+
     //MaterialApp es lo que se utiliza como la raiz de la app
     return const MaterialApp(
-
 
      home: RandomWords(),
     );

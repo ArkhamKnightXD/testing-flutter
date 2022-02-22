@@ -18,19 +18,20 @@ class RandomWords extends StatefulWidget {
 class _RandomWordsState extends State<RandomWords> {
   //Aqui definimos una variable que almacenara un listado de wordpair
   final _randomWordPairs = <WordPair>[];
-  final _savedWordPairs = Set<WordPair>();
+  final _savedWordPairs = <WordPair>{};
 
   //Aqui creamos una funcion que retornara un listView que tambien es un widget (Toodo es un widget aqui)
   Widget _buildList() {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16),
 
+    return ListView.builder(
+
+        padding: const EdgeInsets.all(16),
         //  Para agregar elementos a nuestro listView utilizamos el elemento Itembuilder
         //  el cual es una funcion que recibe 2 parametros
-
         itemBuilder: (context, item) {
           //Los divider son separadores
           if (item.isOdd) {
+
             return const Divider();
           }
 
@@ -47,13 +48,72 @@ class _RandomWordsState extends State<RandomWords> {
         });
   }
 
+
+
   Widget _buildRow(WordPair wordPair) {
-    //Aqui retornamos un listTile que es basicamente un row de la lista
+
+    //Evaluando si la wordPair enviada ya fue guardada
+    final alreadySaved = _savedWordPairs.contains(wordPair);
+
+    //Aqui retornamos un listTile que es basicamente una fila de la lista
     return ListTile(
       title: Text(wordPair.asPascalCase,
           style: const TextStyle(fontSize: 20, color: Colors.black)),
+
+      trailing: Icon(alreadySaved ? Icons.favorite : Icons.favorite_border, color: alreadySaved ? Colors.red : Colors.blueGrey),
+
+      onTap: () {
+
+        setState(() {
+
+          if(alreadySaved){
+
+            _savedWordPairs.remove(wordPair);
+          }
+          else{
+
+            _savedWordPairs.add(wordPair);
+          }
+        });
+      },
     );
   }
+
+  // esta funcion abrira otra pagina, utilizaremos navigator que es el widget
+// encargado de las rutas
+    void _pushSaved() {
+
+    //le enviamos el context al navigator
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (BuildContext context){
+
+          final Iterable<ListTile> tiles = _savedWordPairs.map((WordPair wordPair)  {
+
+            return ListTile(
+              title: Text(wordPair.asPascalCase, style: const TextStyle(fontSize: 16.0),),
+            );
+          });
+
+          //Esto me agrega separacion entre las distintas filas de la lista de que envie
+          final List<Widget> divided = ListTile.divideTiles(context: context, tiles: tiles).toList();
+
+          return Scaffold(
+
+            appBar: AppBar(
+
+              title: const Text("Save Words"),
+              backgroundColor: Colors.blueGrey,
+            ),
+
+            body: ListView(
+              children: divided,
+            ),
+          );
+        })
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +125,15 @@ class _RandomWordsState extends State<RandomWords> {
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,
         title: const Text("Word Generator"),
+      //  De esta forma agrego un boton y su funcionalidad en el appbar
+        actions: <Widget>[
+          //definimos el widget icon le enviamos un widget de icon junto a la funcionalidad
+          // que deseamos que haga cuando este sea presionado
+          IconButton(onPressed: _pushSaved, icon: const Icon(Icons.list))
+        ],
       ),
 
-//  El contenedor es lo que debemos de utilizar para mover widgets en la pantalla
+//  El contenedor es lo que debemos de utilizar para mover widgets en la pantalla y agregar margin y padding
 
       body: Container(
 //  Indicamos el hijo del contenedor, que es el elemento que deseamos manejar
@@ -83,3 +149,4 @@ class _RandomWordsState extends State<RandomWords> {
     );
   }
 }
+
